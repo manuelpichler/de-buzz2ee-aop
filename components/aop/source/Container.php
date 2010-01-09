@@ -25,7 +25,7 @@ class Container implements PointcutRegistry
         $reflection = new \ReflectionClass( $aspectClassName );
         foreach ( $reflection->getMethods() as $method )
         {
-            if ( preg_match( '(\*\s*@(Pointcut|After|AfterReturning|Before)\(\s*"(.*)"\s*\)\s*\*(\r|\n|/))s', $method->getDocComment(), $match ) === 0 )
+            if ( preg_match( '(\*\s*@(Pointcut|After|AfterReturning|AfterThrowing|Before)\(\s*"(.*)"\s*\)\s*\*(\r|\n|/))s', $method->getDocComment(), $match ) === 0 )
             {
                 continue;
             }
@@ -55,6 +55,10 @@ class Container implements PointcutRegistry
 
                 case 'AfterReturning':
                     $aspect->addAdvice( new \de\buzz2ee\aop\advice\AfterReturningAdvice( $pointcut ) );
+                    break;
+
+                case 'AfterThrowing':
+                    $aspect->addAdvice( new \de\buzz2ee\aop\advice\AfterThrowingAdvice( $pointcut ) );
                     break;
 
                 case 'Before':
@@ -200,7 +204,7 @@ class ProxyClassGenerator implements \de\buzz2ee\aop\interfaces\ClassGenerator
         {
             $code .= $this->_methodGenerator->create( $method );
         }
-        $code .= $this->_adviceGenerator->generateAOPInfrastructur();
+        $code .= $this->_adviceGenerator->generateClassInterceptCode();
         
         $code .= '}' . PHP_EOL;
 
@@ -276,11 +280,10 @@ class ProxyMethodGenerator
                 $joinPoint->getVisibility() . ' function ' . $method->getName() . '( ' . $parameters . ')' . PHP_EOL .
                 '    {' . PHP_EOL .
                 '        $arguments = func_get_args();' . PHP_EOL .
-                $this->_adviceCodeGenerator->generateProlog( $joinPoint ) .
-                $this->_adviceCodeGenerator->generateBefore( $joinPoint ) .
+                $this->_adviceCodeGenerator->generateMethodInterceptCodeProlog( $joinPoint ) .
                 '        $returnValue = call_user_func_array( array( $this->_subject, "' .
                 $method->getName() . '" ), $arguments );' . PHP_EOL .
-                $this->_adviceCodeGenerator->generateAfterReturning( $joinPoint ) .
+                $this->_adviceCodeGenerator->generateMethodInterceptCodeEpilog( $joinPoint ) .
                 '        return $returnValue;' . PHP_EOL .
                 '    }' . PHP_EOL .
                 PHP_EOL;

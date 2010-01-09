@@ -1,7 +1,9 @@
 <?php
 namespace de\buzz2ee\aop\generator;
 
+use de\buzz2ee\aop\advice\AfterAdvice;
 use de\buzz2ee\aop\advice\AfterReturningAdvice;
+use de\buzz2ee\aop\advice\AfterThrowingAdvice;
 use de\buzz2ee\aop\advice\BeforeAdvice;
 
 use de\buzz2ee\aop\interfaces\JoinPoint;
@@ -25,10 +27,10 @@ class AdviceCodeGenerator
         $this->_aspects  = $aspects;
     }
 
-    public function generateAOPInfrastructur()
+    public function generateClassInterceptCode()
     {
         $code = '    private $_aop_interceptor_configuration__ = array(' . PHP_EOL;
-        foreach ( $this->_interceptors as $interceptor )
+        foreach ( array_unique( $this->_interceptors ) as $interceptor )
         {
             $code .= "        '" . $interceptor . "'," . PHP_EOL;
         }
@@ -47,6 +49,19 @@ class AdviceCodeGenerator
                  '    }' . PHP_EOL;
 
         return $code;
+    }
+
+    public function generateMethodInterceptCodeProlog( JoinPoint $joinPoint )
+    {
+        return $this->generateProlog( $joinPoint ) .
+               $this->generateBefore( $joinPoint ) .
+               $this->generateTryCatchProlog( $joinPoint );
+    }
+
+    public function generateMethodInterceptCodeEpilog( JoinPoint $joinPoint )
+    {
+        return $this->generateTryCatchEpilog( $joinPoint ) .
+               $this->generateAfterReturning( $joinPoint );
     }
 
     public function generateProlog( JoinPoint $joinPoint )
@@ -74,6 +89,70 @@ class AdviceCodeGenerator
                 $this->_interceptors[] = $advice->getName();
 
                 $code .= '        $this->_aop_interceptor_instances__["' . $advice->getName() . '"]->invoke( $joinPoint );' . PHP_EOL;
+            }
+        }
+        return $code;
+    }
+
+    public function generateTryCatchProlog( JoinPoint $joinPoint )
+    {
+        foreach ( $this->_getAdvicesForJoinPoint( $joinPoint) as $advice )
+        {
+            if ( ( $advice instanceof AfterAdvice || $advice instanceof AfterThrowingAdvice ) === false )
+            {
+                continue;
+            }
+            return '        try' . PHP_EOL .
+                   '        {' . PHP_EOL;
+        }
+        return '';
+    }
+
+    public function generateTryCatchEpilog( JoinPoint $joinPoint )
+    {
+        foreach ( $this->_getAdvicesForJoinPoint( $joinPoint) as $advice )
+        {
+            if ( ( $advice instanceof AfterAdvice || $advice instanceof AfterThrowingAdvice ) === false )
+            {
+                continue;
+            }
+            return $this->generateAfter( $joinPoint ) .
+                   '        }' . PHP_EOL .
+                   '        catch ( \Exception $e )' . PHP_EOL .
+                   '        {' . PHP_EOL .
+                   $this->generateAfterThrowing( $joinPoint ) .
+                   $this->generateAfter( $joinPoint ) .
+                   '            throw $e;' . PHP_EOL .
+                   '        }' . PHP_EOL;
+        }
+        return '';
+    }
+
+    public function generateAfter( JoinPoint $joinPoint )
+    {
+        $code = '';
+        foreach ( $this->_getAdvicesForJoinPoint( $joinPoint ) as $advice )
+        {
+            if ( $advice instanceof AfterAdvice )
+            {
+                $this->_interceptors[] = $advice->getName();
+
+                $code .= '            $this->_aop_interceptor_instances__["' . $advice->getName() . '"]->invoke( $joinPoint );' . PHP_EOL;
+            }
+        }
+        return $code;
+    }
+
+    public function generateAfterThrowing( JoinPoint $joinPoint )
+    {
+        $code = '';
+        foreach ( $this->_getAdvicesForJoinPoint( $joinPoint ) as $advice )
+        {
+            if ( $advice instanceof AfterThrowingAdvice )
+            {
+                $this->_interceptors[] = $advice->getName();
+
+                $code .= '            $this->_aop_interceptor_instances__["' . $advice->getName() . '"]->invoke( $joinPoint );' . PHP_EOL;
             }
         }
         return $code;

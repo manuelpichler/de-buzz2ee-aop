@@ -2,7 +2,7 @@
 namespace de\buzz2ee\aop;
 
 use de\buzz2ee\aop\interfaces\Advice;
-use de\buzz2ee\aop\pointcut\Pointcut;
+use de\buzz2ee\aop\interfaces\Pointcut;
 
 class Aspect
 {
@@ -16,7 +16,7 @@ class Aspect
     /**
      * Pointcuts defined in this aspect.
      *
-     * @var array(\de\buzz2ee\aop\pointcut\Pointcut)
+     * @var array(\de\buzz2ee\aop\interfaces\Pointcut)
      */
     private $_pointcuts = array();
 

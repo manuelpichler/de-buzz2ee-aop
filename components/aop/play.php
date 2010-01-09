@@ -10,6 +10,8 @@ spl_autoload_register(
     }
 );
 
+use de\buzz2ee\aop\interfaces\JoinPoint;
+
 /**
  * @Aspect
  */
@@ -29,7 +31,15 @@ class MyAspect
     /**
      * @Before("\de\buzz2ee\aop\MyAspect::myPointcut()")
      */
-    function myAdvice( interfaces\JoinPoint $joinPoint ) {
+    function myBeforeAdvice( JoinPoint $joinPoint ) {
+        echo __METHOD__ . '(' . $joinPoint->getClassName() . '::' . $joinPoint->getMethodName() . ')' . PHP_EOL;
+    }
+
+    /**
+     * @After("\de\buzz2ee\aop\MyAspect::myPointcut()")
+     */
+    function myAfterAdvice( JoinPoint $joinPoint )
+    {
         echo __METHOD__ . '(' . $joinPoint->getClassName() . '::' . $joinPoint->getMethodName() . ')' . PHP_EOL;
     }
 }
@@ -44,7 +54,15 @@ class MyAspectTwo
     /**
      * @AfterReturning("execution(* *MyClass::foo())")
      */
-    public function myAfterReturningAdvice( interfaces\JoinPoint $joinPoint )
+    public function myAfterReturningAdvice( JoinPoint $joinPoint )
+    {
+        echo __METHOD__ . '(' . $joinPoint->getClassName() . '::' . $joinPoint->getMethodName() . ')' . PHP_EOL;
+    }
+
+    /**
+     * @AfterThrowing("execution(* *MyClass::bar())")
+     */
+    public function myAfterThrowingAdvice( JoinPoint $joinPoint )
     {
         echo __METHOD__ . '(' . $joinPoint->getClassName() . '::' . $joinPoint->getMethodName() . ')' . PHP_EOL;
     }
@@ -61,7 +79,7 @@ class MyClass extends \stdClass
 
     function bar( MyAspect $aspect )
     {
-        echo __METHOD__, PHP_EOL;
+        throw new \Exception( __METHOD__ );
     }
 }
 
@@ -71,3 +89,4 @@ $container->registerAspect( MyAspectTwo::TYPE );
 
 $object = $container->createObject( MyClass::TYPE );
 $object->foo();
+$object->bar( new MyAspect() );
