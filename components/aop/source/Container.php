@@ -50,19 +50,19 @@ class Container implements PointcutRegistry
                     break;
 
                 case 'After':
-                    $aspect->addAdvice( new \de\buzz2ee\aop\advice\AfterAdvice( $pointcut ) );
+                    $aspect->addAdvice( new \de\buzz2ee\aop\advice\AfterAdvice( $pointcut, $method->getName(), $reflection->getName() ) );
                     break;
 
                 case 'AfterReturning':
-                    $aspect->addAdvice( new \de\buzz2ee\aop\advice\AfterReturningAdvice( $pointcut ) );
+                    $aspect->addAdvice( new \de\buzz2ee\aop\advice\AfterReturningAdvice( $pointcut, $method->getName(), $reflection->getName() ) );
                     break;
 
                 case 'AfterThrowing':
-                    $aspect->addAdvice( new \de\buzz2ee\aop\advice\AfterThrowingAdvice( $pointcut ) );
+                    $aspect->addAdvice( new \de\buzz2ee\aop\advice\AfterThrowingAdvice( $pointcut, $method->getName(), $reflection->getName() ) );
                     break;
 
                 case 'Before':
-                    $aspect->addAdvice( new \de\buzz2ee\aop\advice\BeforeAdvice( $pointcut ) );
+                    $aspect->addAdvice( new \de\buzz2ee\aop\advice\BeforeAdvice( $pointcut, $method->getName(), $reflection->getName() ) );
                     break;
             }
         }
@@ -81,12 +81,7 @@ class Container implements PointcutRegistry
         $proxyInstance = new $proxyClass( new $className() );
         foreach ( $proxyInstance->_get_aop_interceptor_configuration() as $name )
         {
-            list( $class, $method ) = explode( '::', substr( $name, 0, -2 ) );
-
-            $proxyInstance->_add_aop_interceptor_instance(
-                $name,
-                new Interceptor( new $class , $method )
-            );
+            $proxyInstance->_add_aop_interceptor_instance( $name, new $name() );
         }
 
         return $proxyInstance;
@@ -106,24 +101,6 @@ class Container implements PointcutRegistry
             }
         }
         throw new \InvalidArgumentException( 'Unknown pointcut name: ' . $pointcutName  );
-    }
-}
-
-class Interceptor
-{
-    private $_object = null;
-
-    private $_methodName = null;
-
-    public function __construct( $object, $methodName )
-    {
-        $this->_object     = $object;
-        $this->_methodName = $methodName;
-    }
-
-    public function invoke( $joinPoint )
-    {
-        $this->_object->{$this->_methodName}( $joinPoint );
     }
 }
 

@@ -89,4 +89,7 @@ $container->registerAspect( MyAspectTwo::TYPE );
 
 $object = $container->createObject( MyClass::TYPE );
 $object->foo();
-$object->bar( new MyAspect() );
+
+try {
+    $object->bar( new MyAspect() );
+} catch ( \Exception $e ) {}

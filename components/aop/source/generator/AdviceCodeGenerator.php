@@ -6,6 +6,7 @@ use de\buzz2ee\aop\advice\AfterReturningAdvice;
 use de\buzz2ee\aop\advice\AfterThrowingAdvice;
 use de\buzz2ee\aop\advice\BeforeAdvice;
 
+use de\buzz2ee\aop\interfaces\Advice;
 use de\buzz2ee\aop\interfaces\JoinPoint;
 use de\buzz2ee\aop\interfaces\PointcutRegistry;
 
@@ -86,9 +87,7 @@ class AdviceCodeGenerator
         {
             if ( $advice instanceof BeforeAdvice )
             {
-                $this->_interceptors[] = $advice->getName();
-
-                $code .= '        $this->_aop_interceptor_instances__["' . $advice->getName() . '"]->invoke( $joinPoint );' . PHP_EOL;
+                $code .= $this->_generateInvoke( $joinPoint, $advice );
             }
         }
         return $code;
@@ -135,9 +134,7 @@ class AdviceCodeGenerator
         {
             if ( $advice instanceof AfterAdvice )
             {
-                $this->_interceptors[] = $advice->getName();
-
-                $code .= '            $this->_aop_interceptor_instances__["' . $advice->getName() . '"]->invoke( $joinPoint );' . PHP_EOL;
+                $code .= $this->_generateInvoke( $joinPoint, $advice );
             }
         }
         return $code;
@@ -150,9 +147,7 @@ class AdviceCodeGenerator
         {
             if ( $advice instanceof AfterThrowingAdvice )
             {
-                $this->_interceptors[] = $advice->getName();
-
-                $code .= '            $this->_aop_interceptor_instances__["' . $advice->getName() . '"]->invoke( $joinPoint );' . PHP_EOL;
+                $code .= $this->_generateInvoke( $joinPoint, $advice );
             }
         }
         return $code;
@@ -165,12 +160,16 @@ class AdviceCodeGenerator
         {
             if ( $advice instanceof AfterReturningAdvice )
             {
-                $this->_interceptors[] = $advice->getName();
-
-                $code .= '        $this->_aop_interceptor_instances__["' . $advice->getName() . '"]->invoke( $joinPoint );' . PHP_EOL;
+                $code .= $this->_generateInvoke( $joinPoint, $advice );
             }
         }
         return $code;
+    }
+
+    private function _generateInvoke( JoinPoint $joinPoint, Advice $advice )
+    {
+        $this->_interceptors[] = $advice->getAspectClassName();
+        return '        $this->_aop_interceptor_instances__["' . $advice->getAspectClassName() . '"]->' . $advice->getAspectMethodName() . '( $joinPoint );' . PHP_EOL;
     }
 
     private function _getAdvicesForJoinPoint( JoinPoint $joinPoint )
