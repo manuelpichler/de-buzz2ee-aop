@@ -63,15 +63,15 @@ require_once 'BaseTest.php';
 class ProxyParameterGeneratorTest extends \de\buzz2ee\aop\BaseTest
 {
     /**
-     * testGeneratedCodeForParameterWithoutTypeHintAndDefaultValue
+     * testGeneratedParameterWithoutTypeHintAndDefaultValue
      *
      * @return void
-     * @covers ProxyParameterGenerator
+     * @covers \de\buzz2ee\aop\generator\ProxyParameterGenerator
      * @group aop
      * @group aop::generator
      * @group unittest
      */
-    public function testGeneratedCodeForParameterWithoutTypeHintAndDefaultValue()
+    public function testGeneratedParameterWithoutTypeHintAndDefaultValue()
     {
         $generator = new ProxyParameterGenerator();
 
@@ -80,15 +80,15 @@ class ProxyParameterGeneratorTest extends \de\buzz2ee\aop\BaseTest
     }
     
     /**
-     * testGeneratedCodeParameterWithoutTypeHintAndFloatDefaultValue
+     * testGeneratedParameterWithoutTypeHintAndFloatDefaultValue
      * 
      * @return void
-     * @covers ProxyParameterGenerator
+     * @covers \de\buzz2ee\aop\generator\ProxyParameterGenerator
      * @group aop
      * @group aop::generator
      * @group unittest
      */
-    public function testGeneratedCodeParameterWithoutTypeHintAndFloatDefaultValue()
+    public function testGeneratedParameterWithoutTypeHintAndFloatDefaultValue()
     {
         $generator = new ProxyParameterGenerator();
 
@@ -103,16 +103,179 @@ class ProxyParameterGeneratorTest extends \de\buzz2ee\aop\BaseTest
         $code = $generator->generate( $parameter );
         $this->assertEquals( '$name = 3.14', $code );
     }
-
-    protected function createParameterWithDefaultValue( $name, $value )
+    
+    /**
+     * testGenerateParameterWithoutTypeHintAndArrayDefaultValue
+     * 
+     * @return void
+     * @covers \de\buzz2ee\aop\generator\ProxyParameterGenerator
+     * @group aop
+     * @group aop::generator
+     * @group unittest
+     */
+    public function testGenerateParameterWithoutTypeHintAndArrayDefaultValue()
     {
-        $parameter = $this->createParameter( $name );
+        $generator = new ProxyParameterGenerator();
+
+        $parameter = $this->createParameter( 'name' );
+        $parameter->expects( $this->once() )
+            ->method( 'isDefaultValueAvailable' )
+            ->will( $this->returnValue( true ) );
+        $parameter->expects( $this->once() )
+            ->method( 'getDefaultValue' )
+            ->will( $this->returnValue( array( 'foo' => 'bar', 23 => 42 ) ) );
+
+        $code = $generator->generate( $parameter );
+        $this->assertEquals( "\$name = array (
+  'foo' => 'bar',
+  23 => 42,
+)",
+            $code
+        );
     }
 
-    protected function createParameter( $name, $type = null, $value = null )
+    /**
+     * testGenerateParameterWithoutArrayTypeHintAndWithoutDefaultValue
+     *
+     * @return void
+     * @covers \de\buzz2ee\aop\generator\ProxyParameterGenerator
+     * @group aop
+     * @group aop::generator
+     * @group unittest
+     */
+    public function testGenerateParameterWithoutArrayTypeHintAndWithoutDefaultValue()
+    {
+        $generator = new ProxyParameterGenerator();
+
+        $parameter = $this->createParameter( 'name' );
+        $parameter->expects( $this->once() )
+            ->method( 'isArray' )
+            ->will( $this->returnValue( true ) );
+
+        $code = $generator->generate( $parameter );
+        $this->assertEquals( 'array $name', $code );
+    }
+
+    /**
+     * testGenerateParameterWithoutArrayTypeHintAndArrayDefaultValue
+     *
+     * @return void
+     * @covers \de\buzz2ee\aop\generator\ProxyParameterGenerator
+     * @group aop
+     * @group aop::generator
+     * @group unittest
+     */
+    public function testGenerateParameterWithoutArrayTypeHintAndArrayDefaultValue()
+    {
+        $generator = new ProxyParameterGenerator();
+
+        $parameter = $this->createParameter( 'name' );
+        $parameter->expects( $this->once() )
+            ->method( 'isArray' )
+            ->will( $this->returnValue( true ) );
+        $parameter->expects( $this->once() )
+            ->method( 'isDefaultValueAvailable' )
+            ->will( $this->returnValue( true ) );
+        $parameter->expects( $this->once() )
+            ->method( 'getDefaultValue' )
+            ->will( $this->returnValue( array() ) );
+
+        $code = $generator->generate( $parameter );
+        $this->assertEquals( 'array $name = array (
+)', 
+            $code
+        );
+    }
+
+    /**
+     * testGenerateParameterWithoutArrayTypeHintAndNullDefaultValue
+     *
+     * @return void
+     * @covers \de\buzz2ee\aop\generator\ProxyParameterGenerator
+     * @group aop
+     * @group aop::generator
+     * @group unittest
+     */
+    public function testGenerateParameterWithoutArrayTypeHintAndNullDefaultValue()
+    {
+        $generator = new ProxyParameterGenerator();
+
+        $parameter = $this->createParameter( 'name' );
+        $parameter->expects( $this->once() )
+            ->method( 'isArray' )
+            ->will( $this->returnValue( true ) );
+        $parameter->expects( $this->once() )
+            ->method( 'isDefaultValueAvailable' )
+            ->will( $this->returnValue( true ) );
+        $parameter->expects( $this->once() )
+            ->method( 'getDefaultValue' )
+            ->will( $this->returnValue( null ) );
+
+        $code = $generator->generate( $parameter );
+        $this->assertEquals( 'array $name = NULL', $code );
+    }
+
+    /**
+     * testGenerateParameterWithoutClassTypeHintAndWithoutDefaultValue
+     *
+     * @return void
+     * @covers \de\buzz2ee\aop\generator\ProxyParameterGenerator
+     * @group aop
+     * @group aop::generator
+     * @group unittest
+     */
+    public function testGenerateParameterWithoutClassTypeHintAndWithoutDefaultValue()
+    {
+        $generator = new ProxyParameterGenerator();
+
+        $parameter = $this->createParameter( 'name' );
+        $parameter->expects( $this->any() )
+            ->method( 'getClass' )
+            ->will( $this->returnValue( new \ReflectionClass( __CLASS__ ) ) );
+
+        $code = $generator->generate( $parameter );
+        $this->assertEquals( '\\' . __CLASS__ . ' $name', $code );
+    }
+
+    /**
+     * testGenerateParameterWithoutClassTypeHintAndWithoutDefaultValue
+     *
+     * @return void
+     * @covers \de\buzz2ee\aop\generator\ProxyParameterGenerator
+     * @group aop
+     * @group aop::generator
+     * @group unittest
+     */
+    public function testGenerateParameterWithoutClassTypeHintAndNullDefaultValue()
+    {
+        $generator = new ProxyParameterGenerator();
+
+        $parameter = $this->createParameter( 'name' );
+        $parameter->expects( $this->any() )
+            ->method( 'getClass' )
+            ->will( $this->returnValue( new \ReflectionClass( __CLASS__ ) ) );
+        $parameter->expects( $this->once() )
+            ->method( 'isDefaultValueAvailable' )
+            ->will( $this->returnValue( true ) );
+        $parameter->expects( $this->once() )
+            ->method( 'getDefaultValue' )
+            ->will( $this->returnValue( null ) );
+
+        $code = $generator->generate( $parameter );
+        $this->assertEquals( '\\' . __CLASS__ . ' $name = NULL', $code );
+    }
+
+    /**
+     * Creates a mocked reflection parameter instance.
+     *
+     * @param string $name The parameter name.
+     *
+     * @return \ReflectionParameter
+     */
+    protected function createParameter( $name )
     {
         $parameter = $this->getMock( '\ReflectionParameter', array(), array( null, 0 ), '', false );
-        $parameter->expects( $this->once() )
+        $parameter->expects( $this->any() )
             ->method( 'getName' )
             ->will( $this->returnValue( $name ) );
 
