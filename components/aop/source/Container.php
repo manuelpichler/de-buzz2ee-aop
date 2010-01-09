@@ -110,10 +110,11 @@ class ProxyClassGenerator implements \de\buzz2ee\aop\interfaces\ClassGenerator
     public function create( $className )
     {
         $position = strrpos( $className, '\\' );
+
         if ( is_int( $position ) )
         {
             $proxyName     = 'Proxy__' . substr( $className, $position + 1 );
-            $namespaceName = substr( $className, 0, $position );
+            $namespaceName = substr( $className, 0, $position + 1 );
         }
         else
         {
@@ -121,7 +122,7 @@ class ProxyClassGenerator implements \de\buzz2ee\aop\interfaces\ClassGenerator
             $namespaceName = '';
         }
 
-        $fileName  = getcwd() . '/' . $proxyName . '.php';
+        $fileName  = getcwd() . '/' . strtr( $className, '\\', '_' ) . '.php';
 
         if ( true || file_exists( $fileName ) === false )
         {
