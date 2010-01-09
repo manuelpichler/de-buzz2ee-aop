@@ -63,7 +63,7 @@ class Container implements PointcutRegistry
 
     public function createObject( $className )
     {
-        $creator    = new ProxyGenerator( new AdviceCodeGenerator( $this, $this->_aspects ) );
+        $creator    = new ProxyClassGenerator( new AdviceCodeGenerator( $this, $this->_aspects ) );
         $proxyClass = $creator->create( $className );
 
         return new $proxyClass( new $className() );
@@ -86,12 +86,9 @@ class Container implements PointcutRegistry
     }
 }
 
-interface Generator
-{
-    function create( $className );
-}
 
-class ProxyGenerator implements Generator
+
+class ProxyClassGenerator implements \de\buzz2ee\aop\interfaces\ClassGenerator
 {
     /**
      *
