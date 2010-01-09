@@ -31,7 +31,12 @@ class PointcutAndMatcherTest extends \de\buzz2ee\aop\BaseTest
             $this->createPointcutMatcher( true )
         );
 
-        $this->assertTrue( $matcher->match( $this->createJoinPoint() ) );
+        $this->assertTrue(
+            $matcher->match(
+                $this->createJoinPoint(), 
+                $this->createPointcutRegistry()
+            )
+        );
     }
 
     /**
@@ -47,7 +52,12 @@ class PointcutAndMatcherTest extends \de\buzz2ee\aop\BaseTest
             $this->createPointcutMatcher( true )
         );
 
-        $this->assertFalse( $matcher->match( $this->createJoinPoint() ) );
+        $this->assertFalse(
+            $matcher->match(
+                $this->createJoinPoint(),
+                $this->createPointcutRegistry()
+            )
+        );
     }
 
     /**
@@ -63,7 +73,12 @@ class PointcutAndMatcherTest extends \de\buzz2ee\aop\BaseTest
             $this->createPointcutMatcher( false )
         );
 
-        $this->assertFalse( $matcher->match( $this->createJoinPoint() ) );
+        $this->assertFalse(
+            $matcher->match(
+                $this->createJoinPoint(),
+                $this->createPointcutRegistry()
+            )
+        );
     }
 
     /**
@@ -79,6 +94,11 @@ class PointcutAndMatcherTest extends \de\buzz2ee\aop\BaseTest
             $this->createPointcutMatcher( false )
         );
 
-        $this->assertFalse( $matcher->match( $this->createJoinPoint() ) );
+        $this->assertFalse(
+            $matcher->match(
+                $this->createJoinPoint(),
+                $this->createPointcutRegistry()
+            )
+        );
     }
 }

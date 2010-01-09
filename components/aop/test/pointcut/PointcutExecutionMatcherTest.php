@@ -29,7 +29,7 @@ class PointcutExecutionMatcherTest extends \de\buzz2ee\aop\BaseTest
         $joinPoint = $this->createJoinPoint( 'Foo', 'bar', 'public' );
         $matcher   = new PointcutExecutionMatcher( 'Foo', 'bar', '*' );
 
-        $this->assertTrue( $matcher->match( $joinPoint ) );
+        $this->assertTrue( $matcher->match( $joinPoint, $this->createPointcutRegistry() ) );
     }
 
     /**
@@ -43,7 +43,7 @@ class PointcutExecutionMatcherTest extends \de\buzz2ee\aop\BaseTest
         $joinPoint = $this->createJoinPoint( '\foo\bar\Baz', 'bar', 'public' );
         $matcher   = new PointcutExecutionMatcher( '\foo\bar\Baz', 'bar', '*' );
 
-        $this->assertTrue( $matcher->match( $joinPoint ) );
+        $this->assertTrue( $matcher->match( $joinPoint, $this->createPointcutRegistry() ) );
     }
 
     /**
@@ -57,7 +57,7 @@ class PointcutExecutionMatcherTest extends \de\buzz2ee\aop\BaseTest
         $joinPoint = $this->createJoinPoint( '\foo\bar\Baz', 'bar', 'public' );
         $matcher   = new PointcutExecutionMatcher( '*\bar\Baz', 'bar', '*' );
 
-        $this->assertTrue( $matcher->match( $joinPoint ) );
+        $this->assertTrue( $matcher->match( $joinPoint, $this->createPointcutRegistry() ) );
     }
 
     /**
@@ -71,7 +71,7 @@ class PointcutExecutionMatcherTest extends \de\buzz2ee\aop\BaseTest
         $joinPoint = $this->createJoinPoint( '\foo\bar\Baz', 'bar', 'public' );
         $matcher   = new PointcutExecutionMatcher( '\foo\bar\Baz', 'b*', '*' );
 
-        $this->assertTrue( $matcher->match( $joinPoint ) );
+        $this->assertTrue( $matcher->match( $joinPoint, $this->createPointcutRegistry() ) );
     }
 
     /**
@@ -85,7 +85,7 @@ class PointcutExecutionMatcherTest extends \de\buzz2ee\aop\BaseTest
         $joinPoint = $this->createJoinPoint( '\foo\bar\Baz', 'bar', 'public' );
         $matcher   = new PointcutExecutionMatcher( '*\Baz', '*', '*' );
 
-        $this->assertTrue( $matcher->match( $joinPoint ) );
+        $this->assertTrue( $matcher->match( $joinPoint, $this->createPointcutRegistry() ) );
     }
 
     /**
@@ -99,7 +99,7 @@ class PointcutExecutionMatcherTest extends \de\buzz2ee\aop\BaseTest
         $joinPoint = $this->createJoinPoint( '\foo\bar\Baz', 'bar', 'public' );
         $matcher   = new PointcutExecutionMatcher( '\foo\bar\baz', 'bar', 'public' );
 
-        $this->assertFalse( $matcher->match( $joinPoint ) );
+        $this->assertFalse( $matcher->match( $joinPoint, $this->createPointcutRegistry() ) );
     }
 
     /**
@@ -113,7 +113,7 @@ class PointcutExecutionMatcherTest extends \de\buzz2ee\aop\BaseTest
         $joinPoint = $this->createJoinPoint( '\foo\bar\Baz', 'bar', 'public' );
         $matcher   = new PointcutExecutionMatcher( '\foo\bar\Baz', 'Bar', 'public' );
 
-        $this->assertFalse( $matcher->match( $joinPoint ) );
+        $this->assertFalse( $matcher->match( $joinPoint, $this->createPointcutRegistry() ) );
     }
 
     /**
@@ -127,7 +127,7 @@ class PointcutExecutionMatcherTest extends \de\buzz2ee\aop\BaseTest
         $joinPoint = $this->createJoinPoint( '\foo\bar\Baz', 'bar', 'public' );
         $matcher   = new PointcutExecutionMatcher( '*\Baz', '*', 'private' );
 
-        $this->assertFalse( $matcher->match( $joinPoint ) );
+        $this->assertFalse( $matcher->match( $joinPoint, $this->createPointcutRegistry() ) );
     }
 
     /**
@@ -141,6 +141,6 @@ class PointcutExecutionMatcherTest extends \de\buzz2ee\aop\BaseTest
         $joinPoint = $this->createJoinPoint( '\foo\bar\Baz', 'bar', 'private' );
         $matcher   = new PointcutExecutionMatcher( '\foo\bar\Baz', 'bar', 'protected' );
 
-        $this->assertFalse( $matcher->match( $joinPoint ) );
+        $this->assertFalse( $matcher->match( $joinPoint, $this->createPointcutRegistry() ) );
     }
 }

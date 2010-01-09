@@ -87,6 +87,6 @@ class PointcutNotMatcher implements PointcutMatcher
      */
     public function match( JoinPoint $joinPoint, PointcutRegistry $registry )
     {
-        return !$this->_matcher->match( $joinPoint );
+        return !$this->_matcher->match( $joinPoint, $registry );
     }
 }

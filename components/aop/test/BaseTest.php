@@ -53,7 +53,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      */
     protected function createJoinPoint( $className = null, $methodName = null, $visibility = null )
     {
-        $joinPoint = $this->getMock( 'de\buzz2ee\aop\interfaces\JoinPoint' );
+        $joinPoint = $this->getMock( '\de\buzz2ee\aop\interfaces\JoinPoint' );
         $joinPoint->expects( $className === null ? $this->never() : $this->atLeastOnce() )
             ->method( 'getClassName' )
             ->will( $this->returnValue( $className ) );
@@ -68,13 +68,23 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Returns a mocked instance of the pointcut registry instance.
+     *
+     * @return \de\buzz2ee\aop\interfaces\PointcutRegistry
+     */
+    protected function createPointcutRegistry()
+    {
+        return $this->getMock( '\de\buzz2ee\aop\interfaces\PointcutRegistry' );
+    }
+
+    /**
      * @param boolean $returnValue
      *
      * @return PointcutMatcher
      */
     protected function createPointcutMatcher( $returnValue )
     {
-        $matcher = $this->getMock( '\de\buzz2ee\aop\interfaces\PointcutMatcher' );
+        $matcher = $this->getMock( 'de\buzz2ee\aop\interfaces\PointcutMatcher' );
         $matcher->expects( $this->any() )
             ->method( 'match' )
             ->will( $this->returnValue( $returnValue ) );

@@ -74,6 +74,6 @@ class PointcutOrMatcher extends PointcutBinaryMatcher
      */
     public function match( JoinPoint $joinPoint, PointcutRegistry $registry )
     {
-        return $this->matchLeft( $joinPoint ) || $this->matchRight( $joinPoint );
+        return $this->matchLeft( $joinPoint, $registry ) || $this->matchRight( $joinPoint, $registry );
     }
 }

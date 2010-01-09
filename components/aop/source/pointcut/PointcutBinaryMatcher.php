@@ -49,6 +49,7 @@ namespace de\buzz2ee\aop\pointcut;
 
 use de\buzz2ee\aop\interfaces\JoinPoint;
 use de\buzz2ee\aop\interfaces\PointcutMatcher;
+use de\buzz2ee\aop\interfaces\PointcutRegistry;
 
 /**
  *
@@ -84,9 +85,9 @@ abstract class PointcutBinaryMatcher implements PointcutMatcher
      *
      * @return boolean
      */
-    protected function matchLeft( JoinPoint $joinPoint )
+    protected function matchLeft( JoinPoint $joinPoint, PointcutRegistry $registry )
     {
-        return $this->_left->match( $joinPoint );
+        return $this->_left->match( $joinPoint, $registry );
     }
 
     /**
@@ -94,8 +95,8 @@ abstract class PointcutBinaryMatcher implements PointcutMatcher
      *
      * @return boolean
      */
-    protected function matchRight( JoinPoint $joinPoint )
+    protected function matchRight( JoinPoint $joinPoint, PointcutRegistry $registry )
     {
-        return $this->_right->match( $joinPoint );
+        return $this->_right->match( $joinPoint, $registry );
     }
 }

@@ -27,7 +27,13 @@ class PointcutNotMatcherTest extends \de\buzz2ee\aop\BaseTest
     public function testMatchReturnsFalseWhichNegatesPreviousResults()
     {
         $matcher = new PointcutNotMatcher( $this->createPointcutMatcher( true ) );
-        $this->assertFalse( $matcher->match( $this->createJoinPoint() ) );
+
+        $this->assertFalse(
+            $matcher->match(
+                $this->createJoinPoint(),
+                $this->createPointcutRegistry()
+            )
+        );
     }
 
     /**
@@ -39,6 +45,12 @@ class PointcutNotMatcherTest extends \de\buzz2ee\aop\BaseTest
     public function testMatchReturnsTrueWhichNegatesPreviousResults()
     {
         $matcher = new PointcutNotMatcher( $this->createPointcutMatcher( false ) );
-        $this->assertTrue( $matcher->match( $this->createJoinPoint() ) );
+
+        $this->assertTrue(
+            $matcher->match(
+                $this->createJoinPoint(),
+                $this->createPointcutRegistry()
+            )
+        );
     }
 }
