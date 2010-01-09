@@ -3,6 +3,7 @@ namespace de\buzz2ee\aop;
 
 use de\buzz2ee\aop\interfaces\PointcutRegistry;
 
+use de\buzz2ee\aop\interfaces\Advice;
 use de\buzz2ee\aop\generator\AdviceCodeGenerator;
 
 class Container implements PointcutRegistry
@@ -262,10 +263,6 @@ class ProxyParameterGenerator
     }
 }
 
-interface Advice
-{
-
-}
 
 abstract class BaseAdvice implements Advice
 {

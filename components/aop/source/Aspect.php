@@ -1,6 +1,9 @@
 <?php
 namespace de\buzz2ee\aop;
 
+use de\buzz2ee\aop\interfaces\Advice;
+use de\buzz2ee\aop\pointcut\Pointcut;
+
 class Aspect
 {
     /**
@@ -39,7 +42,7 @@ class Aspect
         return $this->_pointcuts;
     }
 
-    public function addPointcut( pointcut\Pointcut $pointcut )
+    public function addPointcut( Pointcut $pointcut )
     {
         $this->_pointcuts[] = $pointcut;
     }
