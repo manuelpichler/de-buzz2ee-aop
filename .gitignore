@@ -1,1 +1,3 @@
 setup
+components/aop/build
+components/ioc/build
