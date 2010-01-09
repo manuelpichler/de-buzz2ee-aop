@@ -2,8 +2,10 @@
 namespace de\buzz2ee\aop;
 
 use de\buzz2ee\aop\interfaces\PointcutRegistry;
+use de\buzz2ee\aop\pointcut\Pointcut;
+use de\buzz2ee\aop\pointcut\PointcutExpressionParser;
+use de\buzz2ee\aop\pointcut\PointcutMatcherFactory;
 
-use de\buzz2ee\aop\interfaces\Advice;
 use de\buzz2ee\aop\generator\AdviceCodeGenerator;
 
 class Container implements PointcutRegistry
@@ -12,7 +14,7 @@ class Container implements PointcutRegistry
 
     public function __construct()
     {
-        pointcut\PointcutMatcherFactory::set(new pointcut\PointcutMatcherFactory());
+        PointcutMatcherFactory::set( new PointcutMatcherFactory() );
     }
 
     public function registerAspect( $aspectClassName )
@@ -34,8 +36,8 @@ class Container implements PointcutRegistry
 
             $expression = trim( preg_replace( '(\s*\*\s+)', '', $expression ) );
 
-            $parser   = new pointcut\PointcutExpressionParser();
-            $pointcut = new pointcut\Pointcut(
+            $parser   = new PointcutExpressionParser();
+            $pointcut = new Pointcut(
                 $pointcutName,
                 $parser->parse( $expression )
             );
@@ -47,11 +49,11 @@ class Container implements PointcutRegistry
                     break;
 
                 case 'After':
-                    $aspect->addAdvice( new AfterAdvice( $pointcut ) );
+                    $aspect->addAdvice( new \de\buzz2ee\aop\advice\AfterAdvice( $pointcut ) );
                     break;
 
                 case 'Before':
-                    $aspect->addAdvice( new BeforeAdvice( $pointcut ) );
+                    $aspect->addAdvice( new \de\buzz2ee\aop\advice\BeforeAdvice( $pointcut ) );
                     break;
             }
         }
@@ -261,50 +263,4 @@ class ProxyParameterGenerator
         }
         return $code;
     }
-}
-
-
-abstract class BaseAdvice implements Advice
-{
-    /**
-     * The associated pointcut instance.
-     *
-     * @var \de\buzz2ee\aop\pointcut\Pointcut
-     */
-    private $_pointcut = null;
-
-    /**
-     * Constructs a new advice instance.
-     *
-     * @param \de\buzz2ee\aop\pointcut\Pointcut $pointcut The associated pointcut.
-     */
-    public function __construct( pointcut\Pointcut $pointcut )
-    {
-        $this->_pointcut = $pointcut;
-    }
-
-    public function match( interfaces\JoinPoint $joinPoint, PointcutRegistry $registry )
-    {
-        return $this->_pointcut->match( $joinPoint, $registry );
-    }
-
-    public function getName()
-    {
-        return $this->_pointcut->getName();
-    }
-    
-    public function __toString()
-    {
-        return get_class($this) . "::({$this->_pointcut->getName()})";
-    }
-}
-
-class BeforeAdvice extends BaseAdvice
-{
-
-}
-
-class AfterAdvice extends BaseAdvice
-{
-    
 }
