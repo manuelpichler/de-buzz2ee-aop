@@ -12,4 +12,4 @@ Purpose of AOP package
 
 The purpose of the AOP package is to provide a generic aspect oriented
 programming infrastructure for PHP. It will provide an abstract design that
-allows different implementations of the real aspect weaving process. 
+allows different implementations of the real aspect weaving process.
