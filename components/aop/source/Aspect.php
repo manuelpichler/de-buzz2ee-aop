@@ -3,10 +3,25 @@ namespace de\buzz2ee\aop;
 
 class Aspect
 {
+    /**
+     * Name of the concrete aspect class.
+     *
+     * @var string
+     */
     private $_className = null;
 
+    /**
+     * Pointcuts defined in this aspect.
+     *
+     * @var array(\de\buzz2ee\aop\pointcut\Pointcut)
+     */
     private $_pointcuts = array();
 
+    /**
+     * Advices that declared by this aspect.
+     *
+     * @var array(\de\buzz2ee\aop\interfaces\Advice)
+     */
     private $_advices = array();
 
     public function __construct( $className )
