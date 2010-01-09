@@ -111,7 +111,7 @@ class ProxyMethodGenerator
         $parameters = $this->_createParameters( $method->getParameters() );
 
         $code = '    ' .
-                $joinPoint->getVisibility() . ' function ' . $method->getName() . '( ' . $parameters . ')' . PHP_EOL .
+                $joinPoint->getVisibility() . ' function ' . $method->getName() . '( ' . $parameters . ' )' . PHP_EOL .
                 '    {' . PHP_EOL .
                 '        $arguments = func_get_args();' . PHP_EOL .
                 $this->_adviceCodeGenerator->generateMethodInterceptCodeProlog( $joinPoint ) .

@@ -47,12 +47,10 @@
 
 namespace de\buzz2ee\aop\generator;
 
-require_once 'PHPUnit/Framework.php';
-
-require_once 'ProxyParameterGeneratorTest.php';
+require_once 'BaseTest.php';
 
 /**
- * Test suite for this package.
+ *
  *
  * @category  Components
  * @package   de\buzz2ee\aop\generator
@@ -62,29 +60,62 @@ require_once 'ProxyParameterGeneratorTest.php';
  * @version   Release: @package_version@
  * @link      http://buzz2ee.de/
  */
-class AllTests extends \PHPUnit_Framework_TestSuite
+class ProxyParameterGeneratorTest extends \de\buzz2ee\aop\BaseTest
 {
     /**
-     * Constructs a new test suite instance.
+     * testGeneratedCodeForParameterWithoutTypeHintAndDefaultValue
+     *
+     * @return void
+     * @covers ProxyParameterGenerator
+     * @group aop
+     * @group aop::generator
+     * @group unittest
      */
-    public function __construct()
+    public function testGeneratedCodeForParameterWithoutTypeHintAndDefaultValue()
     {
-        $this->setName( 'de::buzz2ee::aop::generator::AllTests' );
+        $generator = new ProxyParameterGenerator();
 
-        \PHPUnit_Util_Filter::addDirectoryToWhitelist(
-            realpath( dirname( __FILE__ ) . '/../../source/' )
-        );
+        $code = $generator->generate( $this->createParameter( 'name' ) );
+        $this->assertEquals( '$name', $code );
+    }
+    
+    /**
+     * testGeneratedCodeParameterWithoutTypeHintAndFloatDefaultValue
+     * 
+     * @return void
+     * @covers ProxyParameterGenerator
+     * @group aop
+     * @group aop::generator
+     * @group unittest
+     */
+    public function testGeneratedCodeParameterWithoutTypeHintAndFloatDefaultValue()
+    {
+        $generator = new ProxyParameterGenerator();
 
-        $this->addTestSuite( '\de\buzz2ee\aop\generator\ProxyParameterGeneratorTest' );
+        $parameter = $this->createParameter( 'name' );
+        $parameter->expects( $this->once() )
+            ->method( 'isDefaultValueAvailable' )
+            ->will( $this->returnValue( true ) );
+        $parameter->expects( $this->once() )
+            ->method( 'getDefaultValue' )
+            ->will( $this->returnValue( 3.14 ) );
+
+        $code = $generator->generate( $parameter );
+        $this->assertEquals( '$name = 3.14', $code );
     }
 
-    /**
-     * Returns a test suite instance.
-     *
-     * @return PHPUnit_Framework_TestSuite
-     */
-    public static function suite()
+    protected function createParameterWithDefaultValue( $name, $value )
     {
-        return new AllTests();
+        $parameter = $this->createParameter( $name );
+    }
+
+    protected function createParameter( $name, $type = null, $value = null )
+    {
+        $parameter = $this->getMock( '\ReflectionParameter', array(), array( null, 0 ), '', false );
+        $parameter->expects( $this->once() )
+            ->method( 'getName' )
+            ->will( $this->returnValue( $name ) );
+
+        return $parameter;
     }
 }
