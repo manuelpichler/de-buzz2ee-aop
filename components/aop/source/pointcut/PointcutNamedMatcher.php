@@ -9,6 +9,7 @@ namespace de\buzz2ee\aop\pointcut;
 
 use de\buzz2ee\aop\interfaces\JoinPoint;
 use de\buzz2ee\aop\interfaces\PointcutMatcher;
+use de\buzz2ee\aop\interfaces\PointcutRegistry;
 
 /**
  * Named pointcut reference matcher implementation.
@@ -21,13 +22,29 @@ class PointcutNamedMatcher implements PointcutMatcher
 {
     const TYPE = __CLASS__;
 
+    private $_className = null;
+
+    private $_methodName = null;
+
+    private $_pointcutName = null;
+
+    public function __construct( $className, $methodName )
+    {
+        $this->_className  = $className;
+        $this->_methodName = $methodName;
+
+        $this->_pointcutName = $className . '::' . $methodName . '()';
+    }
+
     /**
-     * @param JoinPoint $joinPoint
+     * @param JoinPoint        $joinPoint Currently inspectedt join point.
+     * @param PointcutRegistry $registry  Registry will all available pointcuts
+     *        in the actual container configuration.
      *
      * @return boolean
      */
-    public function match( JoinPoint $joinPoint )
+    public function match( JoinPoint $joinPoint, PointcutRegistry $registry )
     {
-
+        return $registry->getPointcutByName( $this->_pointcutName )->match( $joinPoint, $registry );
     }
 }

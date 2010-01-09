@@ -17,9 +17,11 @@ namespace de\buzz2ee\aop\interfaces;
 interface PointcutMatcher
 {
     /**
-     * @param JoinPoint $joinPoint
+     * @param JoinPoint        $joinPoint Currently inspectedt join point.
+     * @param PointcutRegistry $registry  Registry will all available pointcuts
+     *        in the actual container configuration.
      *
      * @return boolean
      */
-    function match( JoinPoint $joinPoint );
+    function match( JoinPoint $joinPoint, PointcutRegistry $registry );
 }

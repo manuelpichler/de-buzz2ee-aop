@@ -9,6 +9,7 @@ namespace de\buzz2ee\aop\pointcut;
 
 use de\buzz2ee\aop\interfaces\JoinPoint;
 use de\buzz2ee\aop\interfaces\PointcutMatcher;
+use de\buzz2ee\aop\interfaces\PointcutRegistry;
 
 /**
  * Negating pointcut matcher.
@@ -34,11 +35,13 @@ class PointcutNotMatcher implements PointcutMatcher
         $this->_matcher = $matcher;
     }
     /**
-     * @param JoinPoint $joinPoint
+     * @param JoinPoint        $joinPoint Currently inspectedt join point.
+     * @param PointcutRegistry $registry  Registry will all available pointcuts
+     *        in the actual container configuration.
      *
      * @return boolean
      */
-    public function match( JoinPoint $joinPoint )
+    public function match( JoinPoint $joinPoint, PointcutRegistry $registry )
     {
         return !$this->_matcher->match( $joinPoint );
     }

@@ -9,6 +9,7 @@ namespace de\buzz2ee\aop\pointcut;
 
 use de\buzz2ee\aop\interfaces\JoinPoint;
 use de\buzz2ee\aop\interfaces\PointcutMatcher;
+use de\buzz2ee\aop\interfaces\PointcutRegistry;
 
 /**
  * Execution pointcut matcher implementation.
@@ -49,11 +50,13 @@ class PointcutExecutionMatcher implements PointcutMatcher
     }
 
     /**
-     * @param JoinPoint $joinPoint
+     * @param JoinPoint        $joinPoint Currently inspectedt join point.
+     * @param PointcutRegistry $registry  Registry will all available pointcuts
+     *        in the actual container configuration.
      *
      * @return boolean
      */
-    public function match( JoinPoint $joinPoint )
+    public function match( JoinPoint $joinPoint, PointcutRegistry $registry )
     {
         $pattern = sprintf( 
             '(^%s %s::%s$)',

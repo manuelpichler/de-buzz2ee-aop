@@ -20,7 +20,7 @@ use de\buzz2ee\aop\exceptions\InvalidPointcutExpressionException;
 class PointcutExpressionParser
 {
     const REGEXP_POINTCUT_NAMED = '(^
-                (?P<class>([\\]?[a-z_\x7f-\xff][a-z0-9_\x7f-\xff]*)+)::
+                (?P<class>([\\\\]?[a-z_\x7f-\xff][a-z0-9_\x7f-\xff]*)+)::
                 (?P<method>[a-z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\(\)
             $)xi',
           REGEXP_COMBINE_OPERATORS   = '((&&|\|\|))',
@@ -127,7 +127,6 @@ class PointcutExpressionParser
         if ( preg_match( self::REGEXP_POINTCUT_NAMED, $expression, $match ) )
         {
             return PointcutMatcherFactory::get()->createNamedMatcher(
-                $expression,
                 $match['class'],
                 $match['method']
             );
