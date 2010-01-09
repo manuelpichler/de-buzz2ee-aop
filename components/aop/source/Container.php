@@ -63,7 +63,10 @@ class Container implements PointcutRegistry
 
     public function createObject( $className )
     {
-        $creator    = new ProxyClassGenerator( new AdviceCodeGenerator( $this, $this->_aspects ) );
+        $adviceGenerator = new AdviceCodeGenerator( $this, $this->_aspects );
+        $methodGenerator = new ProxyMethodGenerator( $adviceGenerator );
+
+        $creator    = new ProxyClassGenerator( $adviceGenerator, $methodGenerator );
         $proxyClass = $creator->create( $className );
 
         return new $proxyClass( new $className() );
@@ -96,17 +99,29 @@ class ProxyClassGenerator implements \de\buzz2ee\aop\interfaces\ClassGenerator
      */
     private $_methodGenerator = null;
 
-    public function  __construct( AdviceCodeGenerator $adviceGenerator )
-    {
-        $this->_constructorGenerator = new ProxyConstructorGenerator();
-        $this->_methodGenerator      = new ProxyMethodGenerator( $adviceGenerator );
+    public function  __construct( 
+        AdviceCodeGenerator $adviceGenerator,
+        ProxyMethodGenerator $methodGenerator
+    ) {
+        $this->_constructorGenerator = new ProxyConstructorGenerator( $adviceGenerator );
+        $this->_methodGenerator      = $methodGenerator;
     }
 
     public function create( $className )
     {
-        $tempName  = strtr( ltrim( $className, '\\' ), '\\', '_' );
-        $proxyName = 'Proxy__' . $tempName;
-        $fileName  = getcwd() . '/' . $tempName . '.php';
+        $position = strrpos( $className, '\\' );
+        if ( is_int( $position ) )
+        {
+            $proxyName     = 'Proxy__' . substr( $className, $position + 1 );
+            $namespaceName = substr( $className, 0, $position );
+        }
+        else
+        {
+            $proxyName     = 'Proxy__' . $className;
+            $namespaceName = '';
+        }
+
+        $fileName  = getcwd() . '/' . $proxyName . '.php';
 
         if ( true || file_exists( $fileName ) === false )
         {
@@ -115,7 +130,7 @@ class ProxyClassGenerator implements \de\buzz2ee\aop\interfaces\ClassGenerator
 
         include_once $fileName;
 
-        return $proxyName;
+        return $namespaceName . $proxyName;
     }
 
     private function _createClass( $proxyName, \ReflectionClass $class )
@@ -128,8 +143,8 @@ class ProxyClassGenerator implements \de\buzz2ee\aop\interfaces\ClassGenerator
         $code  = '<?php' . PHP_EOL;
         if ( $class->inNamespace() )
         {
-            //$code .= 'namespace ' . $class->getNamespaceName() . ';' . PHP_EOL .
-            //         PHP_EOL;
+            $code .= 'namespace ' . $class->getNamespaceName() . ';' . PHP_EOL .
+                     PHP_EOL;
         }
 
         $code .= 'class ' . $proxyName .
