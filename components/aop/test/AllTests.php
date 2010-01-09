@@ -9,6 +9,7 @@ namespace de\buzz2ee\aop;
 
 require_once 'PHPUnit/Framework.php';
 
+require_once 'generator/AllTests.php';
 require_once 'pointcut/AllTests.php';
 
 /**
@@ -31,6 +32,7 @@ class AllTests extends \PHPUnit_Framework_TestSuite
             realpath( dirname( __FILE__ ) . '/../source/' )
         );
 
+        $this->addTest( generator\AllTests::suite() );
         $this->addTest( pointcut\AllTests::suite() );
     }
 
