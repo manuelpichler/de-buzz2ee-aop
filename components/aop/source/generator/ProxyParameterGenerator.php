@@ -60,25 +60,79 @@ namespace de\buzz2ee\aop\generator;
  */
 class ProxyParameterGenerator
 {
+    /**
+     * This method generates php code that reflects all aspects of the given
+     * parameter instance.
+     *
+     * @param \ReflectionParameter $parameter
+     *        The context parameter instance that must be rendered as php code.
+     *
+     * @return string
+     */
     public function generate( \ReflectionParameter $parameter )
     {
-        $code = '';
+        return $this->_generateOptionalTypeHint( $parameter ) .
+               $this->_generateOptionalPassedByRef( $parameter ) .
+               '$' . $parameter->getName() .
+               $this->_generateOptionalDefaultValue( $parameter );
+    }
+
+    /**
+     * Generates the type hint for the given parameter or returns an empty
+     * string when the parameter has no type hint.
+     *
+     * @param \ReflectionParameter $parameter
+     *        The context parameter instance that must be rendered as php code.
+     *
+     * @return string
+     */
+    private function _generateOptionalTypeHint( \ReflectionParameter $parameter )
+    {
         if ( $parameter->isArray() )
         {
-            $code .=  'array ';
+            return 'array ';
         }
         else if ( is_object( $parameter->getClass() ) )
         {
-            $code .= '\\' . $parameter->getClass()->getName() . ' ';
+            return '\\' . $parameter->getClass()->getName() . ' ';
         }
+        return '';
+    }
 
-        $code .= '$' . $parameter->getName();
+    /**
+     * Renders the php reference operator <b>&</b> when the given parameter is
+     * passed by reference, otherwise this method will return an empty string.
+     *
+     * @param \ReflectionParameter $parameter
+     *        The context parameter instance that must be rendered as php code.
+     *
+     * @return string
+     */
+    private function _generateOptionalPassedByRef( \ReflectionParameter $parameter )
+    {
+        if ( $parameter->isPassedByReference() )
+        {
+            return '&';
+        }
+        return '';
+    }
 
+    /**
+     * Renders the php code for the default value of the given method parameter.
+     * It will return an empty string when the given parameter does not define
+     * a default value.
+     *
+     * @param \ReflectionParameter $parameter
+     *        The context parameter instance that must be rendered as php code.
+     *
+     * @return string
+     */
+    private function _generateOptionalDefaultValue( \ReflectionParameter $parameter )
+    {
         if ( $parameter->isDefaultValueAvailable() )
         {
-
-            $code .= ' = "???"';
+            return ' = ' . var_export( $parameter->getDefaultValue(), true );
         }
-        return $code;
+        return '';
     }
 }
