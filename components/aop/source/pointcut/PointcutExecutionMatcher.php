@@ -70,7 +70,6 @@ class PointcutExecutionMatcher implements PointcutMatcher
             $this->_prepareNamespaceDelimiter( $joinPoint->getClassName() ),
             $joinPoint->getMethodName()
         );
-
         return ( preg_match( $pattern, $subject ) === 1 );
     }
 

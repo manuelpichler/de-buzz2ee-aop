@@ -11,7 +11,7 @@ spl_autoload_register(
 );
 
 /**
- * @aspect
+ * @Aspect
  */
 class MyAspect
 {
@@ -34,6 +34,22 @@ class MyAspect
     }
 }
 
+/**
+ * @Aspect
+ */
+class MyAspectTwo
+{
+    const TYPE = __CLASS__;
+
+    /**
+     * @AfterReturning("execution(* *MyClass::foo())")
+     */
+    public function myAfterReturningAdvice( interfaces\JoinPoint $joinPoint )
+    {
+        echo __METHOD__ . '(' . $joinPoint->getClassName() . '::' . $joinPoint->getMethodName() . ')' . PHP_EOL;
+    }
+}
+
 class MyClass extends \stdClass
 {
     const TYPE = __CLASS__;
@@ -51,6 +67,7 @@ class MyClass extends \stdClass
 
 $container = new Container();
 $container->registerAspect( MyAspect::TYPE );
+$container->registerAspect( MyAspectTwo::TYPE );
 
 $object = $container->createObject( MyClass::TYPE );
 $object->foo();

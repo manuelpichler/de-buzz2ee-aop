@@ -1,6 +1,7 @@
 <?php
 namespace de\buzz2ee\aop\generator;
 
+use de\buzz2ee\aop\advice\AfterReturningAdvice;
 use de\buzz2ee\aop\advice\BeforeAdvice;
 
 use de\buzz2ee\aop\interfaces\JoinPoint;
@@ -69,6 +70,21 @@ class AdviceCodeGenerator
         foreach ( $this->_getAdvicesForJoinPoint( $joinPoint ) as $advice )
         {
             if ( $advice instanceof BeforeAdvice )
+            {
+                $this->_interceptors[] = $advice->getName();
+
+                $code .= '        $this->_aop_interceptor_instances__["' . $advice->getName() . '"]->invoke( $joinPoint );' . PHP_EOL;
+            }
+        }
+        return $code;
+    }
+
+    public function generateAfterReturning( JoinPoint $joinPoint )
+    {
+        $code = '';
+        foreach ( $this->_getAdvicesForJoinPoint( $joinPoint ) as $advice )
+        {
+            if ( $advice instanceof AfterReturningAdvice )
             {
                 $this->_interceptors[] = $advice->getName();
 
