@@ -2,10 +2,11 @@
 namespace de\buzz2ee\aop\pointcut;
 
 use de\buzz2ee\aop\interfaces\JoinPoint;
+use de\buzz2ee\aop\interfaces\Pointcut;
 use de\buzz2ee\aop\interfaces\PointcutMatcher;
 use de\buzz2ee\aop\interfaces\PointcutRegistry;
 
-class Pointcut
+class DefaultPointcut implements Pointcut
 {
     /**
      *
@@ -25,6 +26,9 @@ class Pointcut
         $this->_matcher = $matcher;
     }
 
+    /**
+     * @return <type>
+     */
     public function getName()
     {
         return $this->_name;

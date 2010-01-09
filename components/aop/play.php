@@ -29,7 +29,9 @@ class MyAspect
     /**
      * @Before("\de\buzz2ee\aop\MyAspect::myPointcut()")
      */
-    function myAdvice() {}
+    function myAdvice( interfaces\JoinPoint $joinPoint ) {
+        echo __METHOD__ . '(' . $joinPoint->getClassName() . '::' . $joinPoint->getMethodName() . ')' . PHP_EOL;
+    }
 }
 
 class MyClass extends \stdClass

@@ -1,8 +1,9 @@
 <?php
 namespace de\buzz2ee\aop;
 
+use de\buzz2ee\aop\interfaces\Pointcut;
 use de\buzz2ee\aop\interfaces\PointcutRegistry;
-use de\buzz2ee\aop\pointcut\Pointcut;
+
 use de\buzz2ee\aop\pointcut\PointcutExpressionParser;
 use de\buzz2ee\aop\pointcut\PointcutMatcherFactory;
 
@@ -37,7 +38,7 @@ class Container implements PointcutRegistry
             $expression = trim( preg_replace( '(\s*\*\s+)', '', $expression ) );
 
             $parser   = new PointcutExpressionParser();
-            $pointcut = new Pointcut(
+            $pointcut = new \de\buzz2ee\aop\pointcut\DefaultPointcut(
                 $pointcutName,
                 $parser->parse( $expression )
             );
@@ -69,7 +70,18 @@ class Container implements PointcutRegistry
         $creator    = new ProxyClassGenerator( $adviceGenerator, $methodGenerator );
         $proxyClass = $creator->create( $className );
 
-        return new $proxyClass( new $className() );
+        $proxyInstance = new $proxyClass( new $className() );
+        foreach ( $proxyInstance->_get_aop_interceptor_configuration() as $name )
+        {
+            list( $class, $method ) = explode( '::', substr( $name, 0, -2 ) );
+
+            $proxyInstance->_add_aop_interceptor_instance(
+                $name,
+                new Interceptor( new $class , $method )
+            );
+        }
+
+        return $proxyInstance;
     }
 
     public function getPointcutByName( $pointcutName )
@@ -89,10 +101,32 @@ class Container implements PointcutRegistry
     }
 }
 
+class Interceptor
+{
+    private $_object = null;
 
+    private $_methodName = null;
+
+    public function __construct( $object, $methodName )
+    {
+        $this->_object     = $object;
+        $this->_methodName = $methodName;
+    }
+
+    public function invoke( $joinPoint )
+    {
+        $this->_object->{$this->_methodName}( $joinPoint );
+    }
+}
 
 class ProxyClassGenerator implements \de\buzz2ee\aop\interfaces\ClassGenerator
 {
+    /**
+     *
+     * @var \de\buzz2ee\aop\generator\AdviceCodeGenerator
+     */
+    private $_adviceGenerator = null;
+
     /**
      *
      * @var \de\buzz2ee\aop\ProxyMethodGenerator
@@ -103,6 +137,7 @@ class ProxyClassGenerator implements \de\buzz2ee\aop\interfaces\ClassGenerator
         AdviceCodeGenerator $adviceGenerator,
         ProxyMethodGenerator $methodGenerator
     ) {
+        $this->_adviceGenerator      = $adviceGenerator;
         $this->_constructorGenerator = new ProxyConstructorGenerator( $adviceGenerator );
         $this->_methodGenerator      = $methodGenerator;
     }
@@ -126,7 +161,10 @@ class ProxyClassGenerator implements \de\buzz2ee\aop\interfaces\ClassGenerator
 
         if ( true || file_exists( $fileName ) === false )
         {
-            file_put_contents( $fileName, $this->_createClass( $proxyName, new \ReflectionClass( $className ) ) );
+            $code = $this->_createClass( $proxyName, new \ReflectionClass( $className ) );
+            file_put_contents( $fileName, $code );
+
+            echo $code;
         }
 
         include_once $fileName;
@@ -158,6 +196,7 @@ class ProxyClassGenerator implements \de\buzz2ee\aop\interfaces\ClassGenerator
         {
             $code .= $this->_methodGenerator->create( $method );
         }
+        $code .= $this->_adviceGenerator->generateAOPInfrastructur();
         
         $code .= '}' . PHP_EOL;
 

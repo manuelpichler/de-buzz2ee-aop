@@ -28,11 +28,11 @@ class RuntimeJoinPoint implements JoinPoint
 
     public function getClassName()
     {
-        $this->_className;
+        return $this->_className;
     }
 
     public function getMethodName()
     {
-        $this->_methodName;
+        return $this->_methodName;
     }
 }
