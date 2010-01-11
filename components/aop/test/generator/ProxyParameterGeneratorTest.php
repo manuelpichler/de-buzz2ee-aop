@@ -63,7 +63,7 @@ require_once 'BaseTest.php';
 class ProxyParameterGeneratorTest extends \de\buzz2ee\aop\BaseTest
 {
     /**
-     * testGeneratedParameterWithoutTypeHintAndDefaultValue
+     * testGenerateParameterWithoutTypeHintAndDefaultValue
      *
      * @return void
      * @covers \de\buzz2ee\aop\generator\ProxyParameterGenerator
@@ -71,16 +71,38 @@ class ProxyParameterGeneratorTest extends \de\buzz2ee\aop\BaseTest
      * @group aop::generator
      * @group unittest
      */
-    public function testGeneratedParameterWithoutTypeHintAndDefaultValue()
+    public function testGenerateParameterWithoutTypeHintAndDefaultValue()
     {
         $generator = new ProxyParameterGenerator();
 
         $code = $generator->generate( $this->createParameter( 'name' ) );
         $this->assertEquals( '$name', $code );
     }
+
+    /**
+     * testGenerateParameterPassedByReference
+     *
+     * @return void
+     * @covers \de\buzz2ee\aop\generator\ProxyParameterGenerator
+     * @group aop
+     * @group aop::generator
+     * @group unittest
+     */
+    public function testGenerateParameterPassedByReference()
+    {
+        $generator = new ProxyParameterGenerator();
+
+        $parameter = $this->createParameter( 'name' );
+        $parameter->expects( $this->once() )
+            ->method( 'isPassedByReference' )
+            ->will( $this->returnValue( true ) );
+
+        $code = $generator->generate( $parameter );
+        $this->assertEquals( '&$name', $code );
+    }
     
     /**
-     * testGeneratedParameterWithoutTypeHintAndFloatDefaultValue
+     * testGenerateParameterWithoutTypeHintAndFloatDefaultValue
      * 
      * @return void
      * @covers \de\buzz2ee\aop\generator\ProxyParameterGenerator
@@ -88,7 +110,7 @@ class ProxyParameterGeneratorTest extends \de\buzz2ee\aop\BaseTest
      * @group aop::generator
      * @group unittest
      */
-    public function testGeneratedParameterWithoutTypeHintAndFloatDefaultValue()
+    public function testGenerateParameterWithoutTypeHintAndFloatDefaultValue()
     {
         $generator = new ProxyParameterGenerator();
 
