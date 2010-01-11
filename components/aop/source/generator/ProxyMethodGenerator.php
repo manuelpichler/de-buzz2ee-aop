@@ -79,7 +79,7 @@ class ProxyMethodGenerator
         $this->_parameterGenerator  = new ProxyParameterGenerator();
     }
 
-    public function create( \ReflectionMethod $method )
+    public function generate( \ReflectionMethod $method )
     {
         if ( $method->isAbstract() )
         {

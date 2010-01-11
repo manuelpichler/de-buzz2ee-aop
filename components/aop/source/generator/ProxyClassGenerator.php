@@ -61,12 +61,14 @@ namespace de\buzz2ee\aop\generator;
 class ProxyClassGenerator
 {
     /**
+     * Generator used to generate the real advice code.
      *
      * @var \de\buzz2ee\aop\generator\AdviceCodeGenerator
      */
     private $_adviceGenerator = null;
 
     /**
+     * Generator used to generate all proxy methods of the adviced class.
      *
      * @var \de\buzz2ee\aop\generator\ProxyMethodGenerator
      */
@@ -133,7 +135,7 @@ class ProxyClassGenerator
         $code .= $this->_constructorGenerator->generate( $class );
         foreach ( $class->getMethods() as $method )
         {
-            $code .= $this->_methodGenerator->create( $method );
+            $code .= $this->_methodGenerator->generate( $method );
         }
         $code .= $this->_adviceGenerator->generateClassInterceptCode();
 
