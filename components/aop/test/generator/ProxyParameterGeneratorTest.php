@@ -50,7 +50,7 @@ namespace de\buzz2ee\aop\generator;
 require_once 'BaseTest.php';
 
 /**
- *
+ * Test case for the parameter proxy generator class.
  *
  * @category  Components
  * @package   de\buzz2ee\aop\generator
