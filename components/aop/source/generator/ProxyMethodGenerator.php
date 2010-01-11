@@ -115,8 +115,8 @@ class ProxyMethodGenerator
                 '    {' . PHP_EOL .
                 '        $arguments = func_get_args();' . PHP_EOL .
                 $this->_adviceCodeGenerator->generateMethodInterceptCodeProlog( $joinPoint ) .
-                '        $returnValue = call_user_func_array( array( $this->_subject, "' .
-                $method->getName() . '" ), $arguments );' . PHP_EOL .
+                '        $returnValue = call_user_func_array( array( $this->_subject, ' .
+                "'" . $method->getName() . "' ), \$arguments );" . PHP_EOL .
                 $this->_adviceCodeGenerator->generateMethodInterceptCodeEpilog( $joinPoint ) .
                 '        return $returnValue;' . PHP_EOL .
                 '    }' . PHP_EOL .
