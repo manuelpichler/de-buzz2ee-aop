@@ -82,7 +82,7 @@ class Container implements PointcutRegistry
         $reflection = new \ReflectionClass( $aspectClassName );
         foreach ( $reflection->getMethods() as $method )
         {
-            if ( preg_match( '(\*\s*@(Pointcut|After|AfterReturning|AfterThrowing|Before)\(\s*"(.*)"\s*\)\s*\*(\r|\n|/))s', $method->getDocComment(), $match ) === 0 )
+            if ( preg_match( '(\*\s*@(Pointcut|After|AfterReturning|AfterThrowing|Before|Around)\(\s*"(.*)"\s*\)\s*\*(\r|\n|/))s', $method->getDocComment(), $match ) === 0 )
             {
                 continue;
             }
@@ -117,6 +117,9 @@ class Container implements PointcutRegistry
                 case 'AfterThrowing':
                     $aspect->addAdvice( new \de\buzz2ee\aop\advice\AfterThrowingAdvice( $pointcut, $method->getName(), $reflection->getName() ) );
                     break;
+
+                case 'Around':
+                    $aspect->addAdvice( new \de\buzz2ee\aop\advice\AroundAdvice( $pointcut, $method->getName(), $reflection->getName() ) );
 
                 case 'Before':
                     $aspect->addAdvice( new \de\buzz2ee\aop\advice\BeforeAdvice( $pointcut, $method->getName(), $reflection->getName() ) );

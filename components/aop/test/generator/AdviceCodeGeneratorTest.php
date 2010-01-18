@@ -47,10 +47,10 @@
 
 namespace de\buzz2ee\aop\generator;
 
-use de\buzz2ee\aop\ReflectionJoinPoint;
+require_once 'BaseTest.php';
 
 /**
- *
+ * Test case for the method proxy generator class.
  *
  * @category  Components
  * @package   de\buzz2ee\aop\generator
@@ -60,73 +60,20 @@ use de\buzz2ee\aop\ReflectionJoinPoint;
  * @version   Release: @package_version@
  * @link      http://buzz2ee.de/
  */
-class ProxyMethodGenerator
+class AdviceCodeGeneratorTest extends \de\buzz2ee\aop\BaseTest
 {
     /**
-     *
-     * @var \de\buzz2ee\aop\generator\ProxyParameterGenerator
+     * jsdgashgdjhasgd
      */
-    private $_parameterGenerator = null;
-
-    /**
-     * @var \de\buzz2ee\aop\generator\AdviceCodeGenerator
-     */
-    private $_adviceCodeGenerator = null;
-
-    public function __construct( AdviceCodeGenerator $adviceGenerator )
+    public function testFoo()
     {
-        $this->_adviceCodeGenerator = $adviceGenerator;
-        $this->_parameterGenerator  = new ProxyParameterGenerator();
-    }
+        $joinPoint = $this->createJoinPoint();
+        $registry  = $this->createPointcutRegistry();
+        $aspects   = array();
 
-    public function generate( \ReflectionMethod $method )
-    {
-        if ( $method->isAbstract() )
-        {
-            return;
-        }
-        if ( $method->isConstructor() )
-        {
-            return;
-        }
-        if ( $method->isDestructor() )
-        {
-            return;
-        }
-        if ( $method->isFinal() )
-        {
-            return;
-        }
-        if ( $method->isPrivate() )
-        {
-            return;
-        }
-        if ( $method->isStatic() )
-        {
-            return;
-        }
-
-        $joinPoint = new ReflectionJoinPoint( $method );
-
-        $parameters = $this->_createParameters( $method->getParameters() );
-
-        $code = '    ' .
-                $joinPoint->getVisibility() . ' function ' . $method->getName() . '( ' . $parameters . ' )' . PHP_EOL .
-                '    {' . PHP_EOL .
-                $this->_adviceCodeGenerator->generateMethodInterceptionCode( $joinPoint, '$this->_subject', $method->getName() ) .
-                '    }' . PHP_EOL .
-                PHP_EOL;
-
-        return $code;
-    }
-
-    private function _createParameters( array $parameters )
-    {
-        $code = array();
-        foreach ( $parameters as $index => $parameter )
-        {
-            $code[] = $this->_parameterGenerator->generate( $parameter );
-        }
-        return join( ', ', $code );
+        $generator = new AdviceCodeGenerator( $registry, $aspects );
+        
+        $code = $generator->generateBefore( $joinPoint );
+        echo $code;
     }
 }

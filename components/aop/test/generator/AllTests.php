@@ -49,6 +49,7 @@ namespace de\buzz2ee\aop\generator;
 
 require_once 'PHPUnit/Framework.php';
 
+require_once 'AdviceCodeGeneratorTest.php';
 require_once 'ProxyParameterGeneratorTest.php';
 
 /**
@@ -75,6 +76,7 @@ class AllTests extends \PHPUnit_Framework_TestSuite
             realpath( dirname( __FILE__ ) . '/../../source/' )
         );
 
+        $this->addTestSuite( '\de\buzz2ee\aop\generator\AdviceCodeGeneratorTest' );
         $this->addTestSuite( '\de\buzz2ee\aop\generator\ProxyParameterGeneratorTest' );
     }
 

@@ -50,6 +50,7 @@ namespace de\buzz2ee\aop\generator;
 use de\buzz2ee\aop\advice\AfterAdvice;
 use de\buzz2ee\aop\advice\AfterReturningAdvice;
 use de\buzz2ee\aop\advice\AfterThrowingAdvice;
+use de\buzz2ee\aop\advice\AroundAdvice;
 use de\buzz2ee\aop\advice\BeforeAdvice;
 
 use de\buzz2ee\aop\interfaces\Advice;
@@ -109,17 +110,17 @@ class AdviceCodeGenerator
         return $code;
     }
 
-    public function generateMethodInterceptCodeProlog( JoinPoint $joinPoint )
+    public function generateMethodInterceptionCode( JoinPoint $joinPoint, $objectHandle, $methodName )
     {
-        return $this->generateProlog( $joinPoint ) .
+        return '        $arguments = func_get_args();' . PHP_EOL .
+               $this->generateProlog( $joinPoint ) .
                $this->generateBefore( $joinPoint ) .
-               $this->generateTryCatchProlog( $joinPoint );
-    }
-
-    public function generateMethodInterceptCodeEpilog( JoinPoint $joinPoint )
-    {
-        return $this->generateTryCatchEpilog( $joinPoint ) .
-               $this->generateAfterReturning( $joinPoint );
+               $this->generateTryCatchProlog( $joinPoint ) .
+               '        $returnValue = call_user_func_array( array( ' . $objectHandle . ', ' .
+               "'" . $methodName . "' ), \$arguments );" . PHP_EOL .
+               $this->generateTryCatchEpilog( $joinPoint ) .
+               $this->generateAfterReturning( $joinPoint ) .
+               '        return $returnValue;' . PHP_EOL;
     }
 
     public function generateProlog( JoinPoint $joinPoint )
@@ -129,8 +130,7 @@ class AdviceCodeGenerator
             return '';
         }
         
-        return '        $arguments = func_get_args();' . PHP_EOL .
-               '        $joinPoint = new \de\buzz2ee\aop\RuntimeJoinPoint( $this, ' .
+        return '        $joinPoint = new \de\buzz2ee\aop\RuntimeJoinPoint( $this, ' .
                "'" . $joinPoint->getClassName() . "', " .
                "'" . $joinPoint->getMethodName() . "', " .
                '$arguments );' . PHP_EOL .
@@ -162,6 +162,11 @@ class AdviceCodeGenerator
                    '        {' . PHP_EOL;
         }
         return '';
+    }
+
+    private function _generateAround( JoinPoint $joinPoint )
+    {
+
     }
 
     public function generateTryCatchEpilog( JoinPoint $joinPoint )
