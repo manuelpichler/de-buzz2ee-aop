@@ -120,6 +120,7 @@ class Container implements PointcutRegistry
 
                 case 'Around':
                     $aspect->addAdvice( new \de\buzz2ee\aop\advice\AroundAdvice( $pointcut, $method->getName(), $reflection->getName() ) );
+                    break;
 
                 case 'Before':
                     $aspect->addAdvice( new \de\buzz2ee\aop\advice\BeforeAdvice( $pointcut, $method->getName(), $reflection->getName() ) );
@@ -139,9 +140,9 @@ class Container implements PointcutRegistry
         $proxyClass = $creator->create( $className );
 
         $proxyInstance = new $proxyClass( new $className() );
-        foreach ( $proxyInstance->_get_aop_interceptor_configuration() as $name )
+        foreach ( $proxyInstance->____aop_get_interceptor_configuration() as $name )
         {
-            $proxyInstance->_add_aop_interceptor_instance( $name, new $name() );
+            $proxyInstance->____aop_add_interceptor_instance( $name, new $name() );
         }
 
         return $proxyInstance;

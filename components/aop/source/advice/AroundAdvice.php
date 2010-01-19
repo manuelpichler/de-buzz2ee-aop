@@ -37,7 +37,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category  Components
- * @package   de\buzz2ee\aop\generator
+ * @package   de\buzz2ee\aop\advice
  * @author    Manuel Pichler <mapi@buzz2ee.de>
  * @copyright 2009-2010 Manuel Pichler. All rights reserved.
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
@@ -45,27 +45,20 @@
  * @link      http://buzz2ee.de/
  */
 
-namespace de\buzz2ee\aop\generator;
+namespace de\buzz2ee\aop\advice;
 
 /**
  *
  *
  * @category  Components
- * @package   de\buzz2ee\aop\generator
+ * @package   de\buzz2ee\aop\advice
  * @author    Manuel Pichler <mapi@buzz2ee.de>
  * @copyright 2009-2010 Manuel Pichler. All rights reserved.
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version   Release: @package_version@
  * @link      http://buzz2ee.de/
  */
-class ProxyConstructorGenerator
+class AroundAdvice extends BaseAdvice
 {
-    public function generate( \ReflectionClass $class )
-    {
-        return '    public function __construct( \\' . $class->getName() . ' $subject )' . PHP_EOL .
-               '    {' . PHP_EOL .
-               '        $this->_subject = $subject;' . PHP_EOL .
-               '    }' . PHP_EOL .
-               PHP_EOL;
-    }
+    const TYPE = __CLASS__;
 }

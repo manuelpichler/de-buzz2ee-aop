@@ -79,6 +79,15 @@ class ProxyMethodGenerator
         $this->_parameterGenerator  = new ProxyParameterGenerator();
     }
 
+    public function generateConstructor( \ReflectionClass $class )
+    {
+        return '    public function __construct( \\' . $class->getName() . ' $target )' . PHP_EOL .
+               '    {' . PHP_EOL .
+               '        $this->____aop_interception_target = $target;' . PHP_EOL .
+               '    }' . PHP_EOL .
+               PHP_EOL;
+    }
+
     public function generate( \ReflectionMethod $method )
     {
         if ( $method->isAbstract() )
@@ -113,7 +122,7 @@ class ProxyMethodGenerator
         $code = '    ' .
                 $joinPoint->getVisibility() . ' function ' . $method->getName() . '( ' . $parameters . ' )' . PHP_EOL .
                 '    {' . PHP_EOL .
-                $this->_adviceCodeGenerator->generateMethodInterceptionCode( $joinPoint, '$this->_subject', $method->getName() ) .
+                $this->_adviceCodeGenerator->generateMethodInterceptionCode( $joinPoint, $method->getName() ) .
                 '    }' . PHP_EOL .
                 PHP_EOL;
 

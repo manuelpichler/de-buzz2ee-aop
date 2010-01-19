@@ -63,6 +63,8 @@ use de\buzz2ee\aop\interfaces\JoinPoint;
 class RuntimeJoinPoint implements JoinPoint
 {
     private $_targetObject = null;
+
+    private $_thisObject = null;
     
     private $_className = null;
 
@@ -70,9 +72,15 @@ class RuntimeJoinPoint implements JoinPoint
 
     private $_arguments = array();
     
-    public function __construct( $targetObject, $className, $methodName, array $arguments )
-    {
+    public function __construct( 
+        $targetObject,
+        $thisObject,
+        $className,
+        $methodName,
+        array $arguments
+    ) {
         $this->_targetObject = $targetObject;
+        $this->_thisObject   = $thisObject;
         $this->_className    = $className;
         $this->_methodName   = $methodName;
         $this->_arguments    = $arguments;
@@ -91,5 +99,10 @@ class RuntimeJoinPoint implements JoinPoint
     public function getMethodName()
     {
         return $this->_methodName;
+    }
+
+    public function getArgs()
+    {
+        return $this->_arguments;
     }
 }

@@ -60,5 +60,5 @@ namespace de\buzz2ee\aop\advice;
  */
 class BeforeAdvice extends BaseAdvice
 {
-
+    const TYPE = __CLASS__;
 }

@@ -79,7 +79,6 @@ class ProxyClassGenerator
         ProxyMethodGenerator $methodGenerator
     ) {
         $this->_adviceGenerator      = $adviceGenerator;
-        $this->_constructorGenerator = new ProxyConstructorGenerator( $adviceGenerator );
         $this->_methodGenerator      = $methodGenerator;
     }
 
@@ -89,12 +88,12 @@ class ProxyClassGenerator
 
         if ( is_int( $position ) )
         {
-            $proxyName     = 'Proxy__' . substr( $className, $position + 1 );
+            $proxyName     = substr( $className, $position + 1 ) . '____AOPProxy';
             $namespaceName = substr( $className, 0, $position + 1 );
         }
         else
         {
-            $proxyName     = 'Proxy__' . $className;
+            $proxyName     = $className . '____AOPProxy';
             $namespaceName = '';
         }
 
@@ -132,7 +131,7 @@ class ProxyClassGenerator
                  ' implements \de\buzz2ee\aop\interfaces\Proxy' . PHP_EOL .
                  '{' . PHP_EOL;
 
-        $code .= $this->_constructorGenerator->generate( $class );
+        $code .= $this->_methodGenerator->generateConstructor( $class );
         foreach ( $class->getMethods() as $method )
         {
             $code .= $this->_methodGenerator->generate( $method );

@@ -66,6 +66,15 @@ class MyAspectTwo
     {
         echo __METHOD__ . '(' . $joinPoint->getClassName() . '::' . $joinPoint->getMethodName() . ')' . PHP_EOL;
     }
+
+    /**
+     * @Around("execution(* *MyClass::bar())")
+     */
+    public function myAroundAdvice( interfaces\ProceedingJoinPoint $joinPoint )
+    {
+        echo __METHOD__ . '(' . $joinPoint->getClassName() . '::' . $joinPoint->getMethodName() . ')' . PHP_EOL;
+        $joinPoint->proceed();
+    }
 }
 
 class MyClass extends \stdClass
