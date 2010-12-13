@@ -5,7 +5,7 @@ namespace de\buzz2ee\aop;
 spl_autoload_register(
     function($className) {
         if (strpos($className, __NAMESPACE__) === 0) {
-            include __DIR__ . '/source/main/php/' . strtr( $className, '\\', '/' ) . '.php';
+            include __DIR__ . '/../main/php/' . strtr( $className, '\\', '/' ) . '.php';
         }
     }
 );
